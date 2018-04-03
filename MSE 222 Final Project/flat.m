@@ -3,7 +3,7 @@
 % x0 and y0 = initial points and mu = coefficient of friction
 % output of function are vf = final velocity , t = time of travel, xf and yf = final points
 
-function [ vf,t,xf,yf ] = flat(vi,theta,l,x0,y0,mu)
+function [ vf,xf,yf ] = flat(vi,theta,l,x0,y0,mu)
 
     global mb Ib g rb time f1 f2 f3
     
