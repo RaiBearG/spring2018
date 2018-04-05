@@ -1,12 +1,10 @@
 % curve.m handles the motion of the ball through a curved path 
 % the entire rotation perios is split into 1000 steps and analyzed 
 % that way. The ball and rotating element are assumed to rate from theta = 0 to -pi  
-% input arguments : v0 = initial velocity, x0 & y0 = initial x and y positions
+% input arguments : v0 = initial velocity, x0 & y0 = initial x and y positions, h = step size
 % output arguments : vf = final velocity (assumed in +y direction) , xf yf = final x and y positions
-function [ vf,xf,yf ] = curve( v0,x0,y0,thetai,thetaf )
-    global g rb time f1 f2;
-    
-    h=-pi/1000;% step size for a half circle translation 
+function [ vf,xf,yf ] = curve( v0,x0,y0,thetai,thetaf,h )
+    global g rb time f1 f2; 
     
     R = 0.0889/2-rb;% calculating the radius of the CG of ball from venter point
     
