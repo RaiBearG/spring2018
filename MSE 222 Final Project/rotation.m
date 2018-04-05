@@ -11,7 +11,11 @@ function [vf,xf,yf] = rotation(w0,x0,y0)
     Ibar = 0.0128*mb/3 + 0.0032*mb; % moment of inertia of the rotating element
     Itot = Ibar + Ib + 2*mb*rb^2; % calculate moment of inertia around rotating axis 
     R = sqrt(2*rb^2); % distance of ball CG from rotating axis 
-
+    
+    %calculating the initial velocities in the x and y direciton for plotting
+    vix = w0*R*cos(3*pi/4);
+    viy = w0*R*sin(3*pi/4);
+    
     for i=(3*pi/4)-(pi/1000):-pi/1000:-pi/4 % for loop with step size of -pi/1000
         alpha = R*cos(i)*mb*g/Itot; % calculating alpha from the moment created by the ball
        
@@ -42,6 +46,11 @@ function [vf,xf,yf] = rotation(w0,x0,y0)
         xf = x0 + R*cos(i) - R*cos(i+(pi/1000)); % calculating the new x position 
         yf = y0 + R*sin(i) - R*sin(i+(pi/1000)); % calculating the new y position 
         
+        % calculating the velocity components in x and y direction
+        thetavel = i-pi/2;
+        vfx = vf*cos(thetavel);
+        vfy = vf*sin(thetavel);
+        
         % plot figure 1, x vs y graph
         figure(f1)
         hold on;
@@ -49,11 +58,28 @@ function [vf,xf,yf] = rotation(w0,x0,y0)
         y=[y0 yf];
         plot(x,y,'b')
         
+        % plot x, y, v, a, vs t graph 
+        figure(f2)
+        hold on;
+        deltat = [time time+dt];
+        velx = [vix vfx];
+        vely = [viy vfy];
+        acceleration = [a a];
+        plot(deltat, x, 'b',deltat, y,'g', deltat, velx, 'r', deltat, vely, 'y', deltat, acceleration, 'k');
         
+        %plot W and alpha vs t graph
+        figure(f3)
+        hold on;
+        dw = [w0 wf];
+        dalpha = [alpha alpha];
+        plot(deltat, dw, 'b', deltat, dalpha, 'g');
         
+        % reset the new data as old for the next ittiration 
         w0 = wf;
-        time = time + dt;
+        time = time + dt;% update the total time 
         x0 = xf;
         y0 = yf;
+        vix = vfx;
+        viy = vfy;
     end
 end
