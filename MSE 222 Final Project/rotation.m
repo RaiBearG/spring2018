@@ -1,5 +1,5 @@
 function [vf,t,xf,yf] = rotation(w0,x0,y0)
-    global mb g Ib rb Ibar;
+    global mb g Ib rb Ibar time;
     Itot = Ibar + Ib + 2*mb*rb^2;
     R = sqrt(2*rb^2);
     for i=(3*pi/4)-(pi/1000):-pi/1000:-pi/4
@@ -16,14 +16,14 @@ function [vf,t,xf,yf] = rotation(w0,x0,y0)
             dt=0;
         end
         end
-        wf = w0 +alpha*t;
+        wf = w0 +alpha*dt;
         vf = wf*R;
         xf = x0 + R*cos(i) - Rcos(i+(pi/1000));
         yf = y0 + R*sin(i) - Rsin(i+(pi/1000));
+        time = time + dt;
         %Plotting the w,alpha,a,v,x,y
         
         w0 = wf;
-        t = t + dt;
         x0 = xf;
         y0 = yf;
     end
