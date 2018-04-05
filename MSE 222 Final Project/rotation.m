@@ -13,8 +13,8 @@ function [vf,xf,yf] = rotation(w0,x0,y0)
     R = sqrt(2*rb^2); % distance of ball CG from rotating axis 
     
     %calculating the initial velocities in the x and y direciton for plotting
-    vix = w0*R*cos(3*pi/4);
-    viy = w0*R*sin(3*pi/4);
+    vix = w0*R*cos(3*pi/4-pi/2);
+    viy = w0*R*sin(3*pi/4-pi/2);
     
     for i=(3*pi/4)-(pi/1000):-pi/1000:-pi/4 % for loop with step size of -pi/1000
         alpha = R*cos(i)*mb*g/Itot; % calculating alpha from the moment created by the ball
