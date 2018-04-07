@@ -6,45 +6,47 @@
 % input arguments : w0 = initial anglular velocity, x0 & y0 = initial x and y positions
 % output arguments : vf = final velocity (assumed in -y direction) , xf yf = final x and y positions
 function [vf,xf,yf] = rotation(w0,x0,y0)
-    global mb g Ib rb time f1 f2 f3;
+    global mb g Ib rb time f1 f2 f3 f4;
     
     Ibar = 0.0128*mb/3 + 0.0032*mb; % moment of inertia of the rotating element
     Itot = Ibar + Ib + 2*mb*rb^2; % calculate moment of inertia around rotating axis 
     R = sqrt(2*rb^2); % distance of ball CG from rotating axis 
-    
+    h = -pi/100;
     %calculating the initial velocities in the x and y direciton for plotting
     vix = w0*R*cos(3*pi/4-pi/2);
     viy = w0*R*sin(3*pi/4-pi/2);
     
-    for i=(3*pi/4)-(pi/1000):-pi/1000:-pi/4 % for loop with step size of -pi/1000
+    for i=(3*pi/4)+h:h:-pi/4-h % for loop with step size of -pi/1000
         alpha = R*cos(i)*mb*g/Itot; % calculating alpha from the moment created by the ball
-       
+
         %compensating for the time bug when i = pi/2
         if i == pi/2
             alpha = 0.0458;
         end
         
-        a = alpha*R + (w0^2)*R; % calclating the acceleration tangential and normal
-        Q = [0.5*alpha w0 pi/1000]; % making a column matrix to calculate time 
+%         a = alpha*R + (w0^2)*R; % calclating the acceleration tangential and normal
+        Q = [0.5*alpha w0 -h]; % making a column matrix to calculate time 
         Poly = roots(Q); % using the matlab root function to find root 
         
         t1 = abs(Poly(1));% preparing for the 2 roots for comparison
         t2 = abs(Poly(2));
 
         % getting rid of the unwanted root 
-        if t1>0 && t1<0.05
+        if t1<0.1 
             dt = t1;
-        elseif t2>0 && t2<0.05
+        elseif t2<0.5
             dt = t2;
         else
                 dt=0;
         end
             
-        
+        dx = R*cos(i) - R*cos(i-h);
+        dy = R*sin(i) - R*sin(i-h);
         wf = w0 +alpha*dt; % Calculating the new omega value
         vf = wf*R; % and the correspondant tangential velocity
-        xf = x0 + R*cos(i) - R*cos(i+(pi/1000)); % calculating the new x position 
-        yf = y0 + R*sin(i) - R*sin(i+(pi/1000)); % calculating the new y position 
+        xf = x0 + dx; % calculating the new x position 
+        yf = y0 + dy; % calculating the new y position 
+        a = ((vf^2)-((vix^2)+(viy^2)))/(2*sqrt((dx^2)+(dy^2)));
         
         % calculating the velocity components in x and y direction
         thetavel = i-pi/2;
@@ -58,21 +60,26 @@ function [vf,xf,yf] = rotation(w0,x0,y0)
         y=[y0 yf];
         plot(x,y,'b')
         
-        % plot x, y, v, a, vs t graph 
+        
+           % plot x, y, v, a, vs t graph 
         figure(f2)
         hold on;
         deltat = [time time+dt];
+        plot(deltat, x, 'b',deltat, y,'g' );    
+
+        figure(f4)
+        hold on;
         velx = [vix vfx];
         vely = [viy vfy];
         acceleration = [a a];
-        plot(deltat, x, 'b',deltat, y,'g', deltat, velx, 'r', deltat, vely, 'y', deltat, acceleration, 'k');
+        plot(deltat, velx, 'r', deltat, vely, 'y', deltat, acceleration, 'k'); 
         
         %plot W and alpha vs t graph
         figure(f3)
         hold on;
         dw = [w0 wf];
         dalpha = [alpha alpha];
-        plot(deltat, dw, 'b', deltat, dalpha, 'g');
+        plot(deltat, dw, 'm', deltat, dalpha, 'c');
         
         % reset the new data as old for the next ittiration 
         w0 = wf;
